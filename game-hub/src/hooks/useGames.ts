@@ -24,21 +24,26 @@ interface fetchGameResponse {
 const useGames = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     const contorller = new AbortController();
-
-    apiClient
+    setLoading(true);
+    apiClient //setting the load state to false should be handled in the finally func, but its not worikng in dev with strict mode
       .get<fetchGameResponse>("/games", { signal: contorller.signal })
-      .then((res) => setGames(res.data.results))
+      .then((res) => {
+        setGames(res.data.results);
+        setLoading(false);
+      })
       .catch((err) => {
         if (err instanceof CanceledError) return;
         setError(err.message);
+        setLoading(false);
       });
     return () => contorller.abort();
   }, []);
 
-  return { games, error };
+  return { games, error, isLoading };
 };
 
 export default useGames;
