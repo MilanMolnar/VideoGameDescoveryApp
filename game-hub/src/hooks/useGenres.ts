@@ -1,28 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import apiClient from "../services/api-client";
 import { CanceledError } from "axios";
 
-export interface Platform {
+interface Genre {
   id: number;
   name: string;
-  slug: string;
 }
 
-export interface Game {
-  id: number;
-  name: string;
-  background_image: string;
-  parent_platforms: { platform: Platform }[];
-  metacritic: number;
-}
-
-interface FetchGameResponse {
+interface FetchGenresResponse {
   count: number;
-  results: Game[];
+  results: Genre[];
 }
 
-const useGames = () => {
-  const [games, setGames] = useState<Game[]>([]);
+const useGenres = () => {
+  const [genres, setGenres] = useState<Genre[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setLoading] = useState(false);
 
@@ -30,9 +21,9 @@ const useGames = () => {
     const contorller = new AbortController();
     setLoading(true);
     apiClient //setting the load state to false should be handled in the finally func, but its not worikng in dev with strict mode
-      .get<FetchGameResponse>("/games", { signal: contorller.signal })
+      .get<FetchGenresResponse>("/genres", { signal: contorller.signal })
       .then((res) => {
-        setGames(res.data.results);
+        setGenres(res.data.results);
         setLoading(false);
       })
       .catch((err) => {
@@ -43,7 +34,7 @@ const useGames = () => {
     return () => contorller.abort();
   }, []);
 
-  return { games, error, isLoading };
+  return { genres, error, isLoading };
 };
 
-export default useGames;
+export default useGenres;
