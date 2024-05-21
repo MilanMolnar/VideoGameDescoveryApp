@@ -1,5 +1,7 @@
+import noImage from "../assets/placeholder.webp";
+
 const getCroppedImageUrl = (url: string) => {
-  if (!url) return "";
+  if (!url) return noImage;
   const target = "media/";
   const resolution = {
     width: 600,
